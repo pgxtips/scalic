@@ -1,4 +1,3 @@
-
 mod scal_buffer;
 mod scal_session;
 
