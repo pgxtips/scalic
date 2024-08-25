@@ -1,0 +1,10 @@
+[package]
+name = "Scalic"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+env_logger = "0.11.5"
+log = "0.4.22"
+scal_gfx = { path = "../lib/scal_gfx" }
+sdl2 = "0.37.0"
