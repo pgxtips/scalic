@@ -10,6 +10,7 @@ pub fn win_init(win_name: String, win_width: u32, win_height: u32) {
     let video_subsystem = sdl_context.video().unwrap();
 
     let window = video_subsystem.window(&win_name, win_width, win_height)
+        .resizable()
         .position_centered()
         .build()
         .unwrap();

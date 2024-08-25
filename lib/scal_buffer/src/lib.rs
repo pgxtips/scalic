@@ -10,7 +10,6 @@ impl Buffer{
         Buffer{
             buffer_arr: Vec::new(),
             buffer_loc: String::new()
-
         }
     }
 
