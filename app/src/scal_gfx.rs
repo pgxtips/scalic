@@ -59,13 +59,8 @@ impl ScalSDLWindow {
                 }
             }
 
-            // ---------------
-            //  graphics loop 
-            // ---------------
             self.canvas.clear();
-
             scal_ui.update(self);
-
             self.canvas.present();
 
             // sleep for 1/60th of a second (60fps)
