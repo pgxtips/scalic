@@ -1,42 +1,32 @@
-mod scal_config;
-mod scal_buffer;
-mod scal_session;
-
-mod scal_gfx;
-mod scal_input;
-mod scal_ui;
-
 use env_logger::Env;
-use scal_buffer::Buffer;
+use scal_core::{scal_application::{builder::ApplicationBuilder, configuration::ApplicationConfig}, scal_buffer::buffer_system::BufferSystem, scal_event::event_system::EventSystem};
+use scal_core::scal_ui::ui_system::UISystem;
 
+mod scal_core;
 
 pub fn main() -> anyhow::Result<()> {
     env_logger::init_from_env(Env::default().default_filter_or("info"));
 
-    let mut config = scal_config::ApplicationConfig::load_config();
+    let config = match ApplicationConfig::load_config(){
+        Ok(conf) => conf,
+        Err(err) => {
+            log::error!("Failed to load config file: {:?}", err);
+            ApplicationConfig::new_default()
+        }
+    };
 
-    if config.is_err() {
-        let err = config.err().unwrap();    
-        log::error!("Failed to load config file: {:?}", err);
-        config = Ok(scal_config::ApplicationConfig::new_default());
-    }
+    let event_system = EventSystem::new();
+    let buffer_system = BufferSystem::new();
+    let ui_system = UISystem::new();
 
-    let mut win_handle = scal_gfx::ScalSDLWindow::new(config?)?;
+    let mut application = ApplicationBuilder::new()
+        .set_config(config)
+        .add_system(event_system)
+        .add_system(buffer_system)
+        .add_system(ui_system)
+        .build()?;
 
-    // need an ui system here
-    let mut scal_ui = scal_ui::ScalUI::new();
+    let _ = application.run();
 
-    let _test_view = Box::new(scal_ui::TestView);
-    let _buffer_view_1 = Box::new(scal_ui::BufferView{buffer: Buffer::new_test_one()});
-    let buffer_view_2 = Box::new(scal_ui::BufferView{buffer: Buffer::read("test_file.txt")?});
-
-    scal_ui.change_view(buffer_view_2);
-
-    // need an input system here
-    let scal_input = scal_input::ScalInput{};
-    // need an event system here
-
-    // start the main rendering loop
-    win_handle.start(&scal_input, &scal_ui)?;
     Ok(())
 }

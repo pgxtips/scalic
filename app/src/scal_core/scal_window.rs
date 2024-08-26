@@ -1,14 +1,9 @@
 extern crate sdl2;
 
-use std::time::Duration;
-
-use crate::scal_config::ApplicationConfig;
-use crate::scal_ui::ScalUI;
-use crate::scal_input::ScalInput;
+use crate::scal_core::scal_application::configuration::ApplicationConfig;
 
 #[allow(dead_code)]
 pub struct ScalSDLWindow {
-    pub app_conf: ApplicationConfig,
     pub sdl_context: sdl2::Sdl,
     pub video_subsystem: sdl2::VideoSubsystem,
     pub canvas: sdl2::render::Canvas<sdl2::video::Window>,
@@ -18,7 +13,7 @@ pub struct ScalSDLWindow {
 }
 
 impl ScalSDLWindow {
-    pub fn new(app_conf: ApplicationConfig) -> anyhow::Result<Self> {
+    pub fn new(app_conf: &ApplicationConfig) -> anyhow::Result<Self> {
         let sdl_context = sdl2::init()
             .map_err(|e| anyhow::anyhow!("sdl2 init error: {}", e))?;
         let video_subsystem = sdl_context.video()
@@ -34,7 +29,6 @@ impl ScalSDLWindow {
         let texture_creator = canvas.texture_creator();
 
         Ok(ScalSDLWindow{
-            app_conf,
             sdl_context,
             video_subsystem,
             canvas,
@@ -42,18 +36,5 @@ impl ScalSDLWindow {
             texture_creator,
             ttf_context,
         })
-    }
-
-    pub fn start(&mut self, scal_input: &ScalInput, scal_ui: &ScalUI) -> anyhow::Result<()> {
-        loop {
-            scal_input.handle_input(self, scal_ui)?;
-
-            self.canvas.clear();
-            scal_ui.update(self);
-            self.canvas.present();
-
-            // sleep for 1/60th of a second (60fps)
-            ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
-        }
     }
 }
