@@ -19,7 +19,7 @@ cargo run
 - [x] Create a new buffer
 
 - [ ] Create Main Menu from buffer
-- [ ] Open file into buffer
+- [x] Open file into buffer
 - [ ] Save file from buffer
 - [ ] Edit file in buffer
 
