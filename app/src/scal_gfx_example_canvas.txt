@@ -1,0 +1,5 @@
+// Test: change background color
+//i = (i + 1) % 255;
+//self.canvas.set_draw_color(Color::RGB(i, 64, 255 - i));
+//self.canvas.clear();
+//self.canvas.present();
