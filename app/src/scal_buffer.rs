@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub struct BufferCell {
     pub character: char,
     pub fg_color: (u8, u8, u8, u8),
@@ -6,6 +7,7 @@ pub struct BufferCell {
     pub is_wireframe: bool,
 }
 
+#[derive(Debug)]
 pub struct Buffer {
     pub buffer_file_loc: Option<String>,
     pub buffer_cells: Vec<Vec<BufferCell>>,

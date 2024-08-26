@@ -8,7 +8,7 @@ mod scal_ui;
 use env_logger::Env;
 
 fn buffer_test() -> scal_buffer::Buffer {
-    let buffer = scal_buffer::Buffer::new();
+    let mut buffer = scal_buffer::Buffer::new();
 
     let line1_text = "This is a scalic text editor";
     let line2_text = "this is a monkas test";
@@ -24,7 +24,7 @@ fn buffer_test() -> scal_buffer::Buffer {
             fg_color: (255, 255, 255, 255),
             bg_color: (0, 0, 0, 255),
             is_cursor_blink: false,
-            is_wireframe: true,
+            is_wireframe: false,
         });
     }
 
@@ -32,11 +32,49 @@ fn buffer_test() -> scal_buffer::Buffer {
         line2.push(scal_buffer::BufferCell{
             character: c,
             fg_color: (255, 255, 255, 255),
-            bg_color: (0, 0, 0, 255),
+            bg_color: (255, 0, 0, 255),
             is_cursor_blink: false,
-            is_wireframe: true,
+            is_wireframe: false,
         });
     }
+
+    line2.push(scal_buffer::BufferCell{
+        character: ' ',
+        fg_color: (255, 255, 255, 255),
+        bg_color: (0, 0, 0, 255),
+        is_cursor_blink: false,
+        is_wireframe: false,
+    });
+
+    line2.push(scal_buffer::BufferCell{
+        character: 't',
+        fg_color: (255, 255, 255, 255),
+        bg_color: (0, 255, 0, 255),
+        is_cursor_blink: false,
+        is_wireframe: false,
+    });
+    line2.push(scal_buffer::BufferCell{
+        character: 'e',
+        fg_color: (255, 255, 255, 255),
+        bg_color: (0, 0, 0, 255),
+        is_cursor_blink: false,
+        is_wireframe: false,
+    });
+    line2.push(scal_buffer::BufferCell{
+        character: 's',
+        fg_color: (255, 255, 255, 255),
+        bg_color: (0, 0, 0, 255),
+        is_cursor_blink: false,
+        is_wireframe: false,
+    });
+    line2.push(scal_buffer::BufferCell{
+        character: 't',
+        fg_color: (255, 255, 255, 255),
+        bg_color: (0, 0, 255, 255),
+        is_cursor_blink: false,
+        is_wireframe: false,
+    });
+
 
     for c in line3_text.chars() {
         line3.push(scal_buffer::BufferCell{
@@ -44,9 +82,13 @@ fn buffer_test() -> scal_buffer::Buffer {
             fg_color: (255, 255, 255, 255),
             bg_color: (0, 0, 0, 255),
             is_cursor_blink: false,
-            is_wireframe: true,
+            is_wireframe: false,
         });
     }
+
+    buffer.buffer_cells.push(line1);
+    buffer.buffer_cells.push(line2);
+    buffer.buffer_cells.push(line3);
 
     buffer
 }
@@ -64,7 +106,7 @@ pub fn main() -> anyhow::Result<()> {
     let _test_view = Box::new(scal_ui::TestView);
     let buffer_view = Box::new(scal_ui::BufferView{buffer: buffer_test()});
 
-    scal_ui.change_view(_test_view);
+    scal_ui.change_view(buffer_view);
 
     // need an input system here
     // need an event system here
