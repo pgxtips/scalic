@@ -45,8 +45,8 @@ impl ScalUIView for TestView {
         let ttf_context = &mut win_handle.ttf_context;
         let texture_creator = &mut win_handle.texture_creator;
 
-        let font_path = Path::new("../res/fonts/FiraCode-Regular.ttf");
-        let mut font = ttf_context.load_font(font_path, 16)
+        let font_path = Path::new(&win_handle.app_conf.font_path);
+        let mut font = ttf_context.load_font(font_path, win_handle.app_conf.font_size as u16)
             .map_err(|e| anyhow::anyhow!("error loading font: {}", e))?;
         font.set_style(sdl2::ttf::FontStyle::NORMAL);
 
@@ -66,9 +66,6 @@ impl ScalUIView for TestView {
         let TextureQuery { width, height, .. } = texture.query();
         let tex_width = width;
         let tex_height = height;
-
-        let screen_width = canvas.output_size().unwrap().0;
-        let screen_height = canvas.output_size().unwrap().1;
 
         let padding = 0;
         let target = Rect::new(
@@ -94,14 +91,14 @@ impl ScalUIView for BufferView {
 
         // we want a high point size to get a good resolution, however,
         // we want to render the font to a given font size
-        let font_size = 16;
+        let font_size = win_handle.app_conf.font_size as f32;
 
         // does nothing atm, but in future I might need to manually set the 
         // font point size to get a better resolution as scale according to 
         // the font size
         let font_point_size = (font_size as f32 * 1.0) as u16;
 
-        let font_path = Path::new("../res/fonts/FiraCode-Regular.ttf");
+        let font_path = Path::new(&win_handle.app_conf.font_path);
         let mut font = ttf_context.load_font(font_path, font_point_size)
             .map_err(|e| anyhow::anyhow!("error loading font: {}", e))?;
         font.set_style(sdl2::ttf::FontStyle::NORMAL);

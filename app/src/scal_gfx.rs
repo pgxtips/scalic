@@ -9,6 +9,7 @@ use crate::scal_ui::ScalUI;
 
 #[allow(dead_code)]
 pub struct ScalSDLWindow {
+    pub app_conf: ApplicationConfig,
     pub sdl_context: sdl2::Sdl,
     pub video_subsystem: sdl2::VideoSubsystem,
     pub canvas: sdl2::render::Canvas<sdl2::video::Window>,
@@ -34,6 +35,7 @@ impl ScalSDLWindow {
         let texture_creator = canvas.texture_creator();
 
         Ok(ScalSDLWindow{
+            app_conf,
             sdl_context,
             video_subsystem,
             canvas,
