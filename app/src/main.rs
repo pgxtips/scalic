@@ -6,7 +6,6 @@ mod scal_gfx;
 mod scal_ui;
 
 use env_logger::Env;
-use scal_config::ApplicationConfig;
 
 fn buffer_test() -> scal_buffer::Buffer {
     let mut buffer = scal_buffer::Buffer::new();
@@ -97,12 +96,15 @@ fn buffer_test() -> scal_buffer::Buffer {
 pub fn main() -> anyhow::Result<()> {
     env_logger::init_from_env(Env::default().default_filter_or("info"));
 
-    let config = scal_config::ApplicationConfig::load_config()?;
-    log::info!("Loaded config: {:?}", config);
+    let mut config = scal_config::ApplicationConfig::load_config();
 
-    //let _session = scal_session::ScalSession::new();
+    if config.is_err() {
+        let err = config.err().unwrap();    
+        log::error!("Failed to load config file: {:?}", err);
+        config = Ok(scal_config::ApplicationConfig::new_default());
+    }
 
-    let mut win_handle = scal_gfx::ScalSDLWindow::new(config)?;
+    let mut win_handle = scal_gfx::ScalSDLWindow::new(config?)?;
 
     // need an ui system here
     let mut scal_ui = scal_ui::ScalUI::new();

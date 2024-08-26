@@ -1,4 +1,4 @@
-use std::{fs::File, io::{BufRead, BufReader, Read}, path::Path};
+use std::{fs::File, io::{BufReader, Read}, path::Path};
 
 #[derive(Debug)]
 pub struct ApplicationConfig {

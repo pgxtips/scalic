@@ -1,6 +1,5 @@
 use std::path::Path;
 
-use sdl2::render::Texture;
 use sdl2::{pixels::Color, render::TextureQuery};
 use sdl2::rect::Rect;
 
