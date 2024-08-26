@@ -3,6 +3,7 @@ mod scal_buffer;
 mod scal_session;
 
 mod scal_gfx;
+mod scal_input;
 mod scal_ui;
 
 use env_logger::Env;
@@ -32,9 +33,10 @@ pub fn main() -> anyhow::Result<()> {
     scal_ui.change_view(buffer_view_2);
 
     // need an input system here
+    let scal_input = scal_input::ScalInput{};
     // need an event system here
 
     // start the main rendering loop
-    win_handle.start(&scal_ui)?;
+    win_handle.start(&scal_input, &scal_ui)?;
     Ok(())
 }

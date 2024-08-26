@@ -1,11 +1,10 @@
 extern crate sdl2;
 
-use sdl2::event::Event;
-use sdl2::keyboard::Keycode;
 use std::time::Duration;
 
 use crate::scal_config::ApplicationConfig;
 use crate::scal_ui::ScalUI;
+use crate::scal_input::ScalInput;
 
 #[allow(dead_code)]
 pub struct ScalSDLWindow {
@@ -45,19 +44,9 @@ impl ScalSDLWindow {
         })
     }
 
-    pub fn start(&mut self, scal_ui: &ScalUI) -> anyhow::Result<()> {
-        'running: loop {
-            
-            // Handle events
-            for event in self.event_pump.poll_iter() {
-                match event {
-                    Event::Quit {..} |
-                    Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
-                        break 'running;
-                    },
-                    _ => {}
-                }
-            }
+    pub fn start(&mut self, scal_input: &ScalInput, scal_ui: &ScalUI) -> anyhow::Result<()> {
+        loop {
+            scal_input.handle_input(self, scal_ui)?;
 
             self.canvas.clear();
             scal_ui.update(self);
@@ -66,6 +55,5 @@ impl ScalSDLWindow {
             // sleep for 1/60th of a second (60fps)
             ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
         }
-        Ok(())
     }
 }
