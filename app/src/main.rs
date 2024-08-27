@@ -1,5 +1,5 @@
 use env_logger::Env;
-use scal_core::{scal_application::{builder::ApplicationBuilder, configuration::ApplicationConfig}, scal_buffer::buffer_system::BufferSystem, scal_event::event_system::EventSystem};
+use scal_core::{scal_application::{builder::ApplicationBuilder, configuration::ApplicationConfig}, scal_buffer::buffer_system::BufferSystem, scal_event::event_manager::EventManager};
 use scal_core::scal_ui::ui_system::UISystem;
 
 mod scal_core;
@@ -15,13 +15,13 @@ pub fn main() -> anyhow::Result<()> {
         }
     };
 
-    let event_system = EventSystem::new();
+    let event_manager = EventManager::new();
     let buffer_system = BufferSystem::new();
     let ui_system = UISystem::new();
 
     let mut application = ApplicationBuilder::new()
         .set_config(config)
-        .add_system(event_system)
+        .set_event_manager(event_manager)
         .add_system(buffer_system)
         .add_system(ui_system)
         .build()?;

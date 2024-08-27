@@ -1,3 +1,5 @@
+use sdl2::event::Event;
+
 use crate::scal_core::{scal_application::configuration::ApplicationConfig, scal_ui::ui_component::UIComponent, scal_window::ScalSDLWindow};
 
 pub struct ComponentWindowRoot{
@@ -26,6 +28,6 @@ impl UIComponent for ComponentWindowRoot {
         canvas.set_draw_color(self.colour);
         Ok(())
     }
-    fn update(&self) { }
-    fn handle_input(&self) { }
+    fn update(&mut self, app_conf: &ApplicationConfig, _win_handle: &mut ScalSDLWindow) -> anyhow::Result<()> { Ok(()) }
+    fn handle_input(&mut self,  app_conf: &ApplicationConfig, _win_handle: &mut ScalSDLWindow, events: &Vec<Event>) -> anyhow::Result<()>{ Ok(()) }
 }

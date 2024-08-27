@@ -1,3 +1,5 @@
+use sdl2::event::Event;
+
 use crate::scal_core::{scal_application::configuration::ApplicationConfig, scal_system::ScalSystem, scal_ui::ui_component_tree::UIComponentTree, scal_window::ScalSDLWindow};
 
 use super::{components::window_root::ComponentWindowRoot, ui_component_node::UIComponentNode, workspaces::{self, layout_one::default_workspace}};
@@ -18,9 +20,13 @@ impl UISystem {
 }
 
 impl ScalSystem for UISystem {
-    fn run(&self, app_conf: &ApplicationConfig, win_handle: &mut ScalSDLWindow) {
-        self.component_tree.render_tree(app_conf, win_handle);
+    fn run_system(&self, app_conf: &ApplicationConfig, win_handle: &mut ScalSDLWindow) {
+        self.component_tree.render_tree_nodes(app_conf, win_handle);
     }
-    fn update(&self, _win_handle: &mut ScalSDLWindow) { }
-    fn handle_input(&self, _win_handle: &mut ScalSDLWindow) { }
+    fn update_system(&mut self, app_conf: &ApplicationConfig,  _win_handle: &mut ScalSDLWindow) {
+        self.component_tree.update_tree_nodes(app_conf, _win_handle);
+    }
+    fn handle_input_system(&mut self, app_conf: &ApplicationConfig,  _win_handle: &mut ScalSDLWindow, events: &Vec<Event>) {
+        self.component_tree.handle_input_tree_nodes(app_conf, _win_handle, events);
+    }
 }

@@ -1,3 +1,5 @@
+use sdl2::event::Event;
+
 use crate::scal_core::{scal_application::configuration::ApplicationConfig, scal_buffer::buffer::Buffer, scal_system::ScalSystem, scal_window::ScalSDLWindow};
 
 pub struct BufferSystem {
@@ -15,10 +17,10 @@ impl BufferSystem {
 }
 
 impl ScalSystem for BufferSystem {
-    fn run(&self, app_conf: &ApplicationConfig, win_handle: &mut ScalSDLWindow) {
+    fn run_system(&self, app_conf: &ApplicationConfig, win_handle: &mut ScalSDLWindow) {
     }
-    fn update(&self, win_handle: &mut ScalSDLWindow) {
+    fn update_system(&mut self,app_conf: &ApplicationConfig,  win_handle: &mut ScalSDLWindow) {
     }
-    fn handle_input(&self, win_handle: &mut ScalSDLWindow) {
+    fn handle_input_system(&mut self,app_conf: &ApplicationConfig,  win_handle: &mut ScalSDLWindow, event: &Vec<Event>) {
     }
 } 

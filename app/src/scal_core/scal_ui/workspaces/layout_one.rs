@@ -8,7 +8,7 @@ pub fn default_workspace(component_tree: &mut UIComponentTree) {
         y: 0,
         width: 800,
         height: 600,
-        colour: (0, 0, 255, 0)
+        colour: (0, 0, 0, 0)
     }));
 
     let buffer = scal_core::scal_buffer::buffer::Buffer::new_test_one(); 

@@ -6,6 +6,8 @@ use crate::scal_core::scal_buffer::buffer_cell::BufferCell;
 pub struct Buffer {
     pub buffer_file_loc: Option<String>,
     pub buffer_cells: Vec<Vec<BufferCell>>,
+    pub cursor_loc: (usize, usize),
+    pub background_color: (u8, u8, u8, u8),
 }
 
 impl Buffer {
@@ -26,7 +28,7 @@ impl Buffer {
             line1.push(BufferCell{
                 character: c,
                 fg_color: (255, 255, 255, 255),
-                bg_color: (0, 0, 0, 255),
+                bg_color: (0, 0, 0, 0),
                 is_cursor_blink: false,
                 is_wireframe: false,
             });
@@ -46,7 +48,7 @@ impl Buffer {
             line3.push(BufferCell{
                 character: c,
                 fg_color: (255, 255, 255, 255),
-                bg_color: (0, 0, 0, 255),
+                bg_color: (0, 0, 0, 0),
                 is_cursor_blink: false,
                 is_wireframe: false,
             });
@@ -64,6 +66,8 @@ impl Buffer {
         Buffer{
             buffer_file_loc: None,
             buffer_cells: Vec::new(),
+            cursor_loc: (0, 0),
+            background_color: (0, 0, 0, 255),
         }
     }
 
@@ -78,7 +82,7 @@ impl Buffer {
                 line_vec.push(BufferCell{
                     character: c,
                     fg_color: (255, 255, 255, 255),
-                    bg_color: (0, 0, 0, 255),
+                    bg_color: (0, 0, 0, 0),
                     is_cursor_blink: false,
                     is_wireframe: false,
                 });
@@ -93,4 +97,33 @@ impl Buffer {
     pub fn write() -> anyhow::Result<Self> {
         Ok(Buffer::new())
     }
+
+    pub fn move_cursor_up(&mut self){ 
+        if self.cursor_loc.1 > 0 { self.cursor_loc.1 -= 1; }
+    }
+    pub fn move_cursor_down(&mut self){ 
+         self.cursor_loc.1 += 1;
+    }
+    pub fn move_cursor_left(&mut self){ 
+        if self.cursor_loc.0 > 0 { self.cursor_loc.0 -= 1; }
+    }
+    pub fn move_cursor_right(&mut self){ 
+        self.cursor_loc.0 += 1;
+    }
+    pub fn delete_character(&mut self){ 
+        if self.cursor_loc.0 > 0 {
+            self.cursor_loc.0 -= 1;
+            self.buffer_cells[self.cursor_loc.1].remove(self.cursor_loc.0);
+        }
+    }
+    pub fn insert_newline(&mut self){ 
+        self.buffer_cells.insert(self.cursor_loc.1, Vec::new());
+        self.cursor_loc.1 += 1;
+    }
+    pub fn insert_tab(&mut self){ 
+    }
+    pub fn insert_character(&mut self, c: char){ }
+    
+
+
 }
