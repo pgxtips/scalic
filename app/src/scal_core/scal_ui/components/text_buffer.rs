@@ -51,7 +51,7 @@ impl UIComponent for ComponentTextBuffer {
                 let cell = &buffer_cells[row_idx][col_idx]; 
                 let character = cell.character;
                 let mut fg_color = cell.fg_color;
-                let bg_color = cell.bg_color;
+                let mut bg_color = cell.bg_color;
 
                 // render cursor position
                 let cursor = &buffer.cursor_loc;
@@ -60,10 +60,23 @@ impl UIComponent for ComponentTextBuffer {
                 let cursor_cx = cursor.0 as i32;
                 let cursor_cy = cursor.1 as i32;
 
+                // colour the cursor cell
                 if cursor_cx == col_idx as i32 && cursor_cy == row_idx as i32 {
-                    fg_color.0 = 255 - fg_color.0;
-                    fg_color.1 = 255 - fg_color.1;
-                    fg_color.2 = 255 - fg_color.2;
+
+                    let cursor_color = (210, 215, 211, 255);
+
+                    //fg_color.0 = 255 - fg_color.0;
+                    //fg_color.1 = 255 - fg_color.1;
+                    //fg_color.2 = 255 - fg_color.2;
+
+                    //bg_color.0 = 255 - bg_color.0;
+                    //bg_color.1 = 255 - bg_color.1;
+                    //bg_color.2 = 255 - bg_color.2;
+
+                    bg_color.0 = cursor_color.0;
+                    bg_color.1 = cursor_color.1;
+                    bg_color.2 = cursor_color.2;
+                    bg_color.3 = 255;
                 }
                 
 
@@ -110,27 +123,9 @@ impl UIComponent for ComponentTextBuffer {
                     scaled_height as u32,
                 );
 
-
-                // cell position, not pixel position
-                let cursor_cx_scaled = cursor.0 as i32 * scaled_width;
-                let cursor_cy_scaled = cursor.1 as i32 * scaled_height;
-
-                // create a cursor rect
-                let cursor_rect = Rect::new(
-                    cursor_cx_scaled,
-                    cursor_cy_scaled,
-                    scaled_width as u32,
-                    scaled_height as u32,
-                );
-
-                // render cursor
-                canvas.set_draw_color(Color::RGBA(255, 255, 255, 10));
-                canvas.set_blend_mode(sdl2::render::BlendMode::Blend);
-                canvas.fill_rect(cursor_rect)
-                    .map_err(|e| anyhow::anyhow!("error filling cursor rect: {}", e))?;
-
                 // Apply blend mode for smoother text rendering
                 canvas.set_blend_mode(sdl2::render::BlendMode::Blend);
+
                 canvas.copy(&tex, None, Some(target))
                     .map_err(|e| anyhow::anyhow!("error copying texture: {}", e))?;
 
@@ -169,28 +164,13 @@ impl UIComponent for ComponentTextBuffer {
 pub fn handle_text_buffer_key_down(keycode: Keycode, buffer: &mut Buffer){
 
     match keycode {
-
-        Keycode::Up => {
-            buffer.move_cursor_up();
-        }
-        Keycode::Down => {
-            buffer.move_cursor_down();
-        }
-        Keycode::Left => {
-            buffer.move_cursor_left();
-        }
-        Keycode::Right => {
-            buffer.move_cursor_right();
-        }
-        Keycode::Backspace => {
-            buffer.delete_character();
-        }
-        Keycode::Return => {
-            buffer.insert_newline();
-        }
-        Keycode::Tab => {
-            buffer.insert_tab();
-        }
+        Keycode::Up =>  buffer.move_cursor_up(), 
+        Keycode::Down =>  buffer.move_cursor_down(), 
+        Keycode::Left =>  buffer.move_cursor_left(), 
+        Keycode::Right =>  buffer.move_cursor_right(), 
+        Keycode::Backspace =>  buffer.delete_character(), 
+        Keycode::Return =>  buffer.insert_newline(), 
+        Keycode::Tab =>  buffer.insert_tab(), 
         _ => {}
     }
 

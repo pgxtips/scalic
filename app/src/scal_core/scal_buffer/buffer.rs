@@ -27,7 +27,7 @@ impl Buffer {
         for c in line1_text.chars() {
             line1.push(BufferCell{
                 character: c,
-                fg_color: (255, 255, 255, 255),
+                fg_color: (0, 0, 0, 255),
                 bg_color: (0, 0, 0, 0),
                 is_cursor_blink: false,
                 is_wireframe: false,
@@ -37,7 +37,7 @@ impl Buffer {
         for c in line2_text.chars() {
             line2.push(BufferCell{
                 character: c,
-                fg_color: (255, 255, 255, 255),
+                fg_color: (0, 0, 0, 255),
                 bg_color: (255, 0, 0, 255),
                 is_cursor_blink: false,
                 is_wireframe: false,
@@ -47,7 +47,7 @@ impl Buffer {
         for c in line3_text.chars() {
             line3.push(BufferCell{
                 character: c,
-                fg_color: (255, 255, 255, 255),
+                fg_color: (0, 0, 0, 255),
                 bg_color: (0, 0, 0, 0),
                 is_cursor_blink: false,
                 is_wireframe: false,
@@ -57,6 +57,8 @@ impl Buffer {
         buffer.buffer_cells.push(line1);
         buffer.buffer_cells.push(line2);
         buffer.buffer_cells.push(line3);
+
+        buffer.background_color = (255, 255, 255, 255);
 
         buffer
     }
@@ -99,16 +101,41 @@ impl Buffer {
     }
 
     pub fn move_cursor_up(&mut self){ 
-        if self.cursor_loc.1 > 0 { self.cursor_loc.1 -= 1; }
+        let cursor_x = self.cursor_loc.0;
+        let cursor_y = self.cursor_loc.1;
+
+        if cursor_y > 0 {
+            if cursor_x < self.buffer_cells[cursor_y - 1].len() - 1 { 
+                self.cursor_loc.1 -= 1; 
+            }
+            else { 
+                self.cursor_loc.1 -= 1; 
+                self.cursor_loc.0 = self.buffer_cells[cursor_y - 1].len() -1; 
+            }
+        }
     }
     pub fn move_cursor_down(&mut self){ 
-         self.cursor_loc.1 += 1;
+        let cursor_x = self.cursor_loc.0;
+        let cursor_y = self.cursor_loc.1;
+
+        if cursor_y < self.buffer_cells.len() - 1 {
+            if cursor_x < self.buffer_cells[cursor_y + 1].len() - 1 { 
+                self.cursor_loc.1 += 1; 
+            }
+            else { 
+                self.cursor_loc.1 += 1; 
+                self.cursor_loc.0 = self.buffer_cells[cursor_y + 1].len() - 1; 
+            }
+        }
     }
     pub fn move_cursor_left(&mut self){ 
         if self.cursor_loc.0 > 0 { self.cursor_loc.0 -= 1; }
     }
     pub fn move_cursor_right(&mut self){ 
-        self.cursor_loc.0 += 1;
+        let new_loc = self.cursor_loc.0 + 1;
+        if new_loc < self.buffer_cells[self.cursor_loc.1].len() {
+            self.cursor_loc.0 = new_loc;
+        }
     }
     pub fn delete_character(&mut self){ 
         if self.cursor_loc.0 > 0 {
