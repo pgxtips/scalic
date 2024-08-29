@@ -13,7 +13,7 @@ impl Rope {
         }
     }
 
-    // Provide a method to create an in-order iterator
+    /// Provide a method to create an in-order iterator
     pub fn iter<'a>(&'a self) -> InOrderRopeIter<'a> {
         InOrderRopeIter::new(self)
     }

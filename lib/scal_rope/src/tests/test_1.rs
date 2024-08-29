@@ -1,7 +1,8 @@
 use crate::rope::{rope::Rope, rope_node::RopeNode};
 
 
-fn create_test_rope() -> Rope {
+/// Create a test rope for testing (https://en.wikipedia.org/wiki/Rope_(data_structure)#/media/File:Vector_Rope_example.svg)
+fn create_example_rope() -> Rope {
 
     let mut rope = Rope::new();
 
@@ -111,18 +112,14 @@ fn creating_different_ropes() {
 #[test]
 fn rope_traversal(){
 
+    let example_rope = create_example_rope();
+
     let expected = vec![ "Hello_", "my_", "na", "me_i", "s", "_Simon"];
-    let mut actual = Vec::new();
+    let actual = example_rope
+        .iter()
+        .map(|node| node.value.as_ref().unwrap())
+        .collect::<Vec<&String>>();
 
-    let example_rope = create_test_rope();
-
-    for node in example_rope.iter() {
-        match &node.value {
-            Some(v) => actual.push(v),
-            None => {},
-        }
-    }
-    
     println!("\n{:?}\n", actual);
     assert_eq!(expected, actual);
 }
