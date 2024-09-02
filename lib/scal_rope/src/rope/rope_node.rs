@@ -33,24 +33,8 @@ impl RopeNode {
         &self.left
     }
 
-    pub fn get_left_weight(&self) -> Result<i32, Box<dyn std::error::Error>> {
-        let left = &self.left;
-        match left {
-            Some(node) => Ok(node.weight),
-            None => Err("No left node exists")?,
-        }
-    }
-
     pub fn get_right(&self) -> &Option<Box<RopeNode>> {
         &self.right
-    }
-
-    pub fn get_right_weight(&self) -> Result<i32, Box<dyn std::error::Error>> {
-        let right = &self.right;
-        match right {
-            Some(node) => Ok(node.weight),
-            None => Err("No right node exists")?,
-        }
     }
 
     pub fn is_leaf(&self) -> bool {
@@ -59,6 +43,20 @@ impl RopeNode {
 
     pub fn is_internal(&self) -> bool {
         self.is_internal
+    }
+
+    pub fn get_length(node: &Option<Box<RopeNode>>) -> i32 {
+        if node.is_none() { return 0; }
+        let node = node.as_ref().unwrap();
+
+        if node.is_leaf() {
+            return node.value.as_ref().unwrap().len() as i32;
+        } 
+
+        let left_length = Self::get_length(&node.left);
+        let right_length = Self::get_length(&node.right);
+
+        return left_length + right_length; 
     }
 
     pub fn max_depth(node: &Option<Box<RopeNode>>) -> i32 {
@@ -86,4 +84,40 @@ impl RopeNode {
 
         false 
     }
+
+    pub fn index_of(&self, start_idx: usize) -> Result<char, Box<dyn std::error::Error>> {
+        // to account for the fact the index used for the strings are 0 based
+        let weight = self.weight as usize;
+
+        //println!("start_idx: {}, weight: {}", start_idx, weight);
+
+        // if less than the weight, then we are in the left subtree
+        if start_idx <= weight {
+            // if we are at a leaf node, then return the character
+            if self.is_leaf() {
+                let value = self.value.as_ref().unwrap();
+                let char = value.chars().nth(start_idx);
+                if char.is_none() { return Err("Index out of bounds".into()); }
+                return Ok(char.unwrap());
+            }
+
+            let left = match self.left.as_ref(){
+                Some(r) => r,
+                None => return Err("Index out of bounds".into())
+            };
+
+            return left.index_of(start_idx);
+        }
+        // if greater than the weight, then we are in the right subtree
+        if start_idx > weight {
+            let right = match self.right.as_ref(){
+                Some(r) => r,
+                None => return Err("Index out of bounds".into())
+            };
+            return right.index_of(start_idx-weight);
+        }
+        
+        Err("Error finding index".into())
+    }
+
 }
