@@ -125,7 +125,7 @@ fn rope_traversal(){
 }
 
 #[test]
-fn rope_concat(){
+fn rope_concat_ideal(){
 
     use crate::rope::rope::Rope;
 
@@ -185,8 +185,7 @@ fn rope_concat(){
 
     rope_2.root = Some(Box::new(r2));
 
-    let final_rope = Rope::concat(&mut rope_1, &mut rope_2).unwrap();
-
+    let final_rope = Rope::concat(rope_1, rope_2).unwrap();
 
     let expected = vec![ "Hello_", "my_", "na", "me_i" ];
     let result = final_rope
@@ -195,8 +194,65 @@ fn rope_concat(){
         .collect::<Vec<&String>>();
 
     println!("\nconcat result: {:?}\n", result);
-    println!("\nconcat root weight: {:?}\n", final_rope.root.as_ref().unwrap().weight);
 
     assert_eq!(expected, result);
+    assert_eq!(9, final_rope.root.as_ref().unwrap().weight);
 }
 
+#[test]
+fn rope_max_depth(){
+    let example_rope = create_example_rope();
+    assert_eq!(5, example_rope.max_depth());
+}
+
+#[test]
+fn rope_is_balanced_ideal(){
+
+    let mut rope = Rope::new();
+    let mut r1 = RopeNode::new();
+    let n1 = RopeNode::new();
+    let n2 = RopeNode::new();
+
+    r1.left = Some(Box::new(n1));
+    r1.right = Some(Box::new(n2));
+    rope.root = Some(Box::new(r1));
+
+    assert_eq!(true, RopeNode::is_balanced(&rope.root));
+}
+
+#[test]
+fn rope_is_balanced_not_ideal(){
+
+    let mut rope = Rope::new();
+    let mut r1 = RopeNode::new();
+    let mut n1 = RopeNode::new();
+    let n2 = RopeNode::new();
+
+    n1.left = Some(Box::new(n2));
+    r1.left = Some(Box::new(n1));
+    rope.root = Some(Box::new(r1));
+
+    assert_eq!(false, RopeNode::is_balanced(&rope.root));
+}
+
+#[test]
+fn rope_is_balanced_not_ideal_2(){
+
+    let mut rope = Rope::new();
+    let mut r1 = RopeNode::new();
+    let mut n1 = RopeNode::new();
+    let n2 = RopeNode::new();
+    let mut n3 = RopeNode::new();
+    let mut n4 = RopeNode::new();
+    let n5 = RopeNode::new_leaf("leaf".to_string());
+
+    n4.left = Some(Box::new(n5));
+    n3.left = Some(Box::new(n4));
+    n1.right = Some(Box::new(n3));
+
+    r1.left = Some(Box::new(n1));
+    r1.right = Some(Box::new(n2));
+    rope.root = Some(Box::new(r1));
+
+    assert_eq!(false, RopeNode::is_balanced(&rope.root));
+}

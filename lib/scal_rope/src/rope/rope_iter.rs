@@ -8,8 +8,11 @@ pub struct InOrderRopeIter<'a> {
 impl <'a> Iterator for InOrderRopeIter <'a>{
     type Item = &'a Box<RopeNode>;
 
+    /// Provide a method to create an in-order iterator
+    /// - returns an iterator over the leaves
+    /// - non-consuming
     fn next(&mut self) -> Option<Self::Item> {
-        self.next_item()
+        self.next_leaf()
     }
 }
 
@@ -29,7 +32,7 @@ impl<'a> InOrderRopeIter<'a> {
         }
     }
 
-    pub fn next_item(&mut self) -> Option<&'a Box<RopeNode>> {
+    pub fn next_leaf(&mut self) -> Option<&'a Box<RopeNode>> {
 
         let result = self.stack.pop();
 

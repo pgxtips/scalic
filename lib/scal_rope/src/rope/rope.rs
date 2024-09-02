@@ -14,11 +14,14 @@ impl Rope {
     }
 
     /// Provide a method to create an in-order iterator
+    /// - returns an iterator over the leaves
     pub fn iter<'a>(&'a self) -> InOrderRopeIter<'a> {
         InOrderRopeIter::new(self)
     }
 
-    pub fn concat(rope_1: &mut Rope, rope_2: &mut Rope) -> Result<Rope, Box<dyn std::error::Error>> {
+    /// Concatenates two ropes together
+    /// - consumes/moves the input ropes
+    pub fn concat(rope_1: Rope, rope_2: Rope) -> Result<Rope, Box<dyn std::error::Error>> {
         let mut new_rope = Rope::new();
         let mut new_root = RopeNode::new();
 
@@ -28,11 +31,16 @@ impl Rope {
         };
 
         new_root.weight = new_weight;
-        new_root.left = rope_1.root.take();
-        new_root.right = rope_2.root.take();
+        new_root.left = rope_1.root;
+        new_root.right = rope_2.root;
 
         new_rope.root = Some(Box::new(new_root));
 
         Ok(new_rope)
     }
+
+    pub fn max_depth(&self) -> i32 {
+        RopeNode::max_depth(&self.root)
+    }
+
 }
