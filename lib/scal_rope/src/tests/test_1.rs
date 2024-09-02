@@ -123,3 +123,80 @@ fn rope_traversal(){
     println!("\n{:?}\n", actual);
     assert_eq!(expected, actual);
 }
+
+#[test]
+fn rope_concat(){
+
+    use crate::rope::rope::Rope;
+
+    let mut rope_1 = Rope::new();
+    let mut rope_2 = Rope::new();
+
+    let s1_1 = RopeNode {
+        weight: 6,
+        value: Some(String::from("Hello_")),
+        left: None,
+        right: None,
+        is_internal: false,
+    };
+
+    let s1_2 = RopeNode {
+        weight: 3,
+        value: Some(String::from("my_")),
+        left: None,
+        right: None,
+        is_internal: false,
+    };
+
+    let r1 = RopeNode {
+        weight: 6,
+        value: None,
+        left: Some(Box::new(s1_1)),
+        right: Some(Box::new(s1_2)),
+        is_internal: true,
+    };
+
+    rope_1.root = Some(Box::new(r1));
+
+
+    let s2_1 = RopeNode {
+        weight: 2,
+        value: Some(String::from("na")),
+        left: None,
+        right: None,
+        is_internal: false,
+    };
+
+    let s2_2 = RopeNode {
+        weight: 4,
+        value: Some(String::from("me_i")),
+        left: None,
+        right: None,
+        is_internal: false,
+    };
+
+    let r2 = RopeNode {
+        weight: 2,
+        value: None,
+        left: Some(Box::new(s2_1)),
+        right: Some(Box::new(s2_2)),
+        is_internal: true,
+    };
+
+    rope_2.root = Some(Box::new(r2));
+
+    let final_rope = Rope::concat(&mut rope_1, &mut rope_2).unwrap();
+
+
+    let expected = vec![ "Hello_", "my_", "na", "me_i" ];
+    let result = final_rope
+        .iter()
+        .map(|node| node.value.as_ref().unwrap())
+        .collect::<Vec<&String>>();
+
+    println!("\nconcat result: {:?}\n", result);
+    println!("\nconcat root weight: {:?}\n", final_rope.root.as_ref().unwrap().weight);
+
+    assert_eq!(expected, result);
+}
+

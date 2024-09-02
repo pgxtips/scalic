@@ -23,8 +23,24 @@ impl RopeNode {
         &self.left
     }
 
+    pub fn get_left_weight(&self) -> Result<i32, Box<dyn std::error::Error>> {
+        let left = &self.left;
+        match left {
+            Some(node) => Ok(node.weight),
+            None => Err("No left node exists")?,
+        }
+    }
+
     pub fn get_right(&self) -> &Option<Box<RopeNode>> {
         &self.right
+    }
+
+    pub fn get_right_weight(&self) -> Result<i32, Box<dyn std::error::Error>> {
+        let right = &self.right;
+        match right {
+            Some(node) => Ok(node.weight),
+            None => Err("No right node exists")?,
+        }
     }
 
     pub fn is_leaf(&self) -> bool {
