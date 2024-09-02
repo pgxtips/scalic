@@ -1,5 +1,4 @@
 use crate::rope::rope_node::RopeNode;
-use crate::rope::rope_iter::InOrderRopeIter;
 
 #[derive(Debug, PartialEq)]
 pub struct Rope {
@@ -11,12 +10,6 @@ impl Rope {
         Rope {
             root: Some(Box::new(RopeNode::new())),
         }
-    }
-
-    /// Provide a method to create an in-order iterator
-    /// - returns an iterator over the leaves
-    pub fn iter<'a>(&'a self) -> InOrderRopeIter<'a> {
-        InOrderRopeIter::new(self)
     }
 
     pub fn get_length(&self) -> i32 {

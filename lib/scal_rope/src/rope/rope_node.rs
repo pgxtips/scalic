@@ -29,14 +29,6 @@ impl RopeNode {
         }
     }
 
-    pub fn get_left(&self) -> &Option<Box<RopeNode>> {
-        &self.left
-    }
-
-    pub fn get_right(&self) -> &Option<Box<RopeNode>> {
-        &self.right
-    }
-
     pub fn is_leaf(&self) -> bool {
         self.left.is_none() && self.right.is_none()
     }
