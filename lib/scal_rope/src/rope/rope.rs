@@ -37,6 +37,8 @@ impl Rope {
 
         new_rope.root = Some(Box::new(new_root));
 
+        let new_rope = new_rope.rebalance();
+
         Ok(new_rope)
     }
 
@@ -49,7 +51,7 @@ impl Rope {
     }
 
     /// Collect the set of leaves and rebuild the tree from the bottom-up.
-    pub fn rebalance(&mut self) -> &mut Self {
+    pub fn rebalance(mut self) -> Self {
         if !self.is_balanced() {
             let leaves = &self.iter().collect::<Vec<&Box<RopeNode>>>();
             let new_rope = Self::merge(&leaves, 0, leaves.len());
@@ -113,4 +115,84 @@ impl Rope {
         let root_node = self.root.as_ref().unwrap();
         root_node.index_of(index)
     }
+
+    pub fn split(self, index: usize) -> Result<(Rope, Rope), Box<dyn std::error::Error>>{
+        self.split_2(index)
+    }
+
+    fn split_2(self, index: usize) -> Result<(Rope, Rope), Box<dyn std::error::Error>> {
+
+        let current_node = match self.root.as_ref(){
+            Some(node) => node,
+            None => return Err("No root node".into()),
+        };
+
+        let left = match &current_node.left{
+            Some(node) => Some(Rope { root: Some(node.clone()) }),
+            None => None,
+        };
+
+        let right = match &current_node.right{
+            Some(node) => Some(Rope { root: Some(node.clone()) }),
+            None => None,
+        };
+
+        let weight = current_node.weight as usize;
+
+        if index < weight {
+
+            println!("\n{:?}\n", current_node);
+
+            let left = match left{
+                Some(r) => r,
+                None => return Err("No left node".into()),
+            };
+            
+            let split = match left.split(index){
+                Ok(s) => s,
+                Err(e) => return Err(e),
+            };
+
+            let new_left = split.0.rebalance();
+
+            let new_right = match right{
+                Some(r) => Rope::concat(split.1, r)?,
+                None => Rope::new(),
+            };
+
+            return Ok((new_left, new_right));
+        } else if index > weight {
+
+            let right = match right{
+                Some(r) => r,
+                None => return Err("No right node".into()),
+            };
+
+            let split = match right.split(index-weight){
+                Ok(s) => s,
+                Err(e) => return Err(e),
+            };
+
+            let new_left = match left{
+                Some(l) => Rope::concat(l, split.0)?,
+                None => Rope::new(),
+            };
+
+            let new_right = split.1.rebalance();
+
+            return Ok((new_left, new_right));
+        } else {
+            let left = match left{
+                Some(r) => r,
+                None => Rope::new(),
+            };
+            let right = match right{
+                Some(r) => r,
+                None => Rope::new(),
+            };
+            return Ok((left, right));
+        }
+    }
+
+
 }

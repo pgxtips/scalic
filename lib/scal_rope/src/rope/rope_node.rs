@@ -120,4 +120,6 @@ impl RopeNode {
         Err("Error finding index".into())
     }
 
+
+
 }

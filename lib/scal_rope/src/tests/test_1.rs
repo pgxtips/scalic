@@ -269,7 +269,7 @@ fn rope_get_length(){
 
 #[test]
 fn rope_rebalance(){
-    let mut rope = create_example_rope();
+    let rope = create_example_rope();
     let rope = rope.rebalance();
     assert_eq!(true, RopeNode::is_balanced(&rope.root));
 
@@ -325,4 +325,15 @@ fn rope_index_of_out_of_bounds_large(){
     let result = rope.index_of(idx);
 
     assert_eq!(true, result.is_err());
+}
+
+
+#[test]
+fn rope_split(){
+    let rope = create_example_rope();
+
+    let (left, right) = rope.split(12).unwrap();
+
+    println!("\nleft: {:?}\n", left);
+    println!("\nright: {:?}\n", right);
 }
