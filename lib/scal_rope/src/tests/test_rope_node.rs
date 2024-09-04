@@ -338,6 +338,19 @@ fn rope_insert_lower_bounds(){
 }
 
 #[test]
+fn rope_insert_empty_node(){
+    let rope = RopeNode::new();
+    let rope = RopeNode::insert(rope.clone(), 0, "test".to_string()).unwrap();
+
+    let expected = vec![ "test" ];
+    let actual = RopeNode::get_leaves(rope.clone());
+
+    println!("\nrope values: {:?}\n", actual);
+
+    assert_eq!(expected, actual);
+}
+
+#[test]
 fn rope_insert_first_letter(){
     let rope = create_example_rope();
     let rope = RopeNode::insert(rope.clone(), 11, "test".to_string()).unwrap();

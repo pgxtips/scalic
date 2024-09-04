@@ -308,7 +308,7 @@ impl RopeNode {
         // to account for the fact the index used for the strings are 0 based
         let weight = RopeNode::get_weight(Rc::clone(&self_));
 
-        println!("start_idx: {}, weight: {}", start_idx, weight);
+        //println!("start_idx: {}, weight: {}", start_idx, weight);
 
         // if less than the weight, then we are in the left subtree
         if start_idx <= weight {
@@ -348,7 +348,7 @@ impl RopeNode {
     /// - right rope contains the nodes that were split off
     pub fn split(self_: Rc<RefCell<Self>>, start_idx: usize) -> Result<(Rc<RefCell<RopeNode>>, Rc<RefCell<RopeNode>>), Box<dyn std::error::Error>> {
         let weight = RopeNode::get_weight(Rc::clone(&self_));
-        println!("index: {}, weight: {}, length: {}", start_idx, weight, RopeNode::get_length(Rc::clone(&self_)));
+        //println!("index: {}, weight: {}, length: {}", start_idx, weight, RopeNode::get_length(Rc::clone(&self_)));
 
         // bounds check
         if start_idx > RopeNode::get_length(Rc::clone(&self_)) {
@@ -442,12 +442,19 @@ impl RopeNode {
             return Err("Index out of bounds".into());
         }
 
+        let new_node = RopeNode::new_leaf(value);
+
+        // if the rope is empty, then just insert the value
+        if RopeNode::get_length(Rc::clone(&self_)) == 0 {
+            let new_rope = RopeNode::concat(Rc::clone(&self_), Some(Rc::clone(&new_node)))?;
+            return Ok(new_rope);
+        }
+
         let (left_split, right_split) = match RopeNode::split(Rc::clone(&self_), idx){
             Ok((l, r)) => (l, r),
             Err(e) => panic!("Error splitting rope: {}", e),
         };
 
-        let new_node = RopeNode::new_leaf(value);
 
         let left_split_length = RopeNode::get_length(Rc::clone(&left_split));
         let right_split_length = RopeNode::get_length(Rc::clone(&right_split));
@@ -474,13 +481,13 @@ impl RopeNode {
             return Err("Index out of bounds".into());
         }
 
-        println!("self before deletion: {:?}\n", RopeNode::get_leaves(self_.clone()));
+        //println!("self before deletion: {:?}\n", RopeNode::get_leaves(self_.clone()));
 
         let lhs = RopeNode::split(Rc::clone(&self_), start)?.0;
-        println!("self after lhs split: {:?}\n", RopeNode::get_leaves(self_.clone()));
+        //println!("self after lhs split: {:?}\n", RopeNode::get_leaves(self_.clone()));
 
         let rhs = RopeNode::split(Rc::clone(&self_), start+length)?.1;
-        println!("self after rhs split: {:?}", RopeNode::get_leaves(self_.clone()));
+        //println!("self after rhs split: {:?}", RopeNode::get_leaves(self_.clone()));
 
         let lhs_length = RopeNode::get_length(Rc::clone(&lhs));
         let rhs_length = RopeNode::get_length(Rc::clone(&rhs));
