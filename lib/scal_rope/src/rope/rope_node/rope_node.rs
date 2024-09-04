@@ -219,6 +219,8 @@ impl RopeNode {
         RopeNode::set_right(Rc::clone(&new_root), Rc::clone(&rope_2));
         RopeNode::set_weight(Rc::clone(&new_root), rope_weight);
 
+        println!("new_rope weight: {:?}", RopeNode::get_weight(Rc::clone(&new_root)));
+
         //println!("new_rope: {:?}", new_root.borrow().get_leaves());
         //println!("new_rope_weight: {}", new_root.borrow().get_weight());
 
@@ -289,8 +291,6 @@ impl RopeNode {
     pub fn index_of(self_: Rc<RefCell<Self>>, start_idx: usize) -> Result<char, Box<dyn std::error::Error>> {
         // to account for the fact the index used for the strings are 0 based
         let weight = RopeNode::get_weight(Rc::clone(&self_));
-
-        //println!("start_idx: {}, weight: {}", start_idx, weight);
 
         // if less than the weight, then we are in the left subtree
         if start_idx <= weight {
@@ -429,6 +429,8 @@ impl RopeNode {
         // if the rope is empty, then just insert the value
         if RopeNode::get_length(Rc::clone(&self_)) == 0 {
             let new_rope = RopeNode::concat(Rc::clone(&self_), Some(Rc::clone(&new_node)))?;
+            //println!("new_rope: {:?}", RopeNode::get_leaves(Rc::clone(&new_rope)));
+            RopeNode::rebalance(Rc::clone(&new_rope));
             return Ok(new_rope);
         }
 
@@ -443,15 +445,18 @@ impl RopeNode {
 
         if left_split_length == 0 { 
             let new_rope = RopeNode::concat(Rc::clone(&new_node), Some(Rc::clone(&right_split)))?;
+            RopeNode::rebalance(Rc::clone(&new_rope));
             return Ok(new_rope); 
         }
         else if right_split_length == 0 { 
             let new_rope = RopeNode::concat(Rc::clone(&left_split), Some(Rc::clone(&new_node)))?;
+            RopeNode::rebalance(Rc::clone(&new_rope));
             return Ok(new_rope); 
         }
 
         let left_split = RopeNode::concat(Rc::clone(&left_split), Some(Rc::clone(&new_node)))?;
         let new_rope = RopeNode::concat(Rc::clone(&left_split), Some(Rc::clone(&right_split)))?;
+        RopeNode::rebalance(Rc::clone(&new_rope));
 
         Ok(new_rope)
     }
