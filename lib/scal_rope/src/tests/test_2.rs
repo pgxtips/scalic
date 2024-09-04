@@ -1,14 +1,3 @@
-
-/*
-#[test]
-fn creating_a_new_rope() {
-    use crate::rope::rope::Rope;
-
-    let rope = Rope::new();
-    assert_eq!(rope.root, Some(Box::new(RopeNode::new())));
-}
-*/
-
 use std::{cell::RefCell, rc::Rc};
 use crate::rope::rope_node_new::RopeNode;
 
@@ -76,7 +65,7 @@ fn rope_traversal(){
         .map(|node| node.borrow().get_value().unwrap())
         .collect::<Vec<String>>();
 
-    println!("\n{:?}\n", actual);
+    //println!("\n{:?}\n", actual);
     assert_eq!(expected, actual);
 }
 
@@ -117,7 +106,7 @@ fn rope_concat_ideal(){
     r2.borrow_mut().set_left(s2_1);
     r2.borrow_mut().set_right(s2_2);
 
-    let final_rope = r1.borrow().concat(r2).unwrap();
+    let final_rope = r1.borrow().concat(Some(r2)).unwrap();
 
     let expected = vec![ "Hello_", "my_", "na", "me_i" ];
     let result = final_rope
@@ -126,7 +115,7 @@ fn rope_concat_ideal(){
         .map(|node| node.borrow().get_value().unwrap())
         .collect::<Vec<String>>();
 
-    println!("\nconcat result: {:?}\n", result);
+    //println!("\nconcat result: {:?}\n", result);
 
     assert_eq!(expected, result);
     assert_eq!(9, final_rope.borrow().get_weight());
@@ -176,5 +165,168 @@ fn rope_is_balanced_not_ideal_2(){
     r1.borrow_mut().set_right(Rc::clone(&n2));
 
     assert_eq!(false, r1.borrow().is_balanced());
+}
+
+#[test]
+fn rope_rebalance(){
+    let rope = create_example_rope();
+    assert_eq!(false, rope.borrow().is_balanced());
+
+    let rope = rope.borrow().rebalance();
+    assert_eq!(true, rope.borrow().is_balanced());
+
+    let expected = vec![ "Hello_", "my_", "na", "me_i", "s", "_Simon"];
+    let actual = rope 
+        .borrow()
+        .iter()
+        .map(|node| node.borrow().get_value().unwrap())
+        .collect::<Vec<String>>();
+
+    assert_eq!(expected, actual);
+}
+
+#[test]
+fn rope_index_of_ideal(){
+    let rope = create_example_rope();
+    let idx = 7;
+
+    let result = rope.borrow().index_of(idx).unwrap();
+    assert_eq!('y', result);
+}
+
+#[test]
+fn rope_index_of_ideal_upper_bound(){
+    let rope = create_example_rope();
+
+    let values = rope 
+        .borrow()
+        .iter()
+        .map(|node| node.borrow().get_value().unwrap())
+        .collect::<Vec<String>>()
+        .join("");
+
+    let idx = values.len() - 1;
+
+    let result = rope.borrow().index_of(idx).unwrap();
+    assert_eq!('n', result);
+}
+
+#[test]
+fn rope_index_of_ideal_lower_bound(){
+    let rope = create_example_rope();
+    let idx = 0;
+
+    let result = rope.borrow().index_of(idx).unwrap();
+    assert_eq!('H', result);
+}
+
+#[test]
+fn rope_index_of_out_of_bounds_large(){
+    let rope = create_example_rope();
+    let idx = 22;
+    let result = rope.borrow().index_of(idx);
+
+    assert_eq!(true, result.is_err());
+}
+
+
+/*
+let left_vals = left
+    .borrow()
+    .iter()
+    .filter(|node| node.borrow().get_value().is_some())
+    .map(|node| node.borrow().get_value().unwrap())
+    .collect::<Vec<String>>();
+*/
+#[test]
+fn rope_split_case_first_letter(){
+    let rope = create_example_rope();
+
+    let (left, right) = rope.borrow_mut().split(11).unwrap();
+
+    let left_vals = left
+        .borrow()
+        .iter()
+        .filter(|node| node.borrow().get_value().is_some())
+        .map(|node| node.borrow().get_value().unwrap())
+        .collect::<Vec<String>>();
+
+    let right_vals = right 
+        .borrow()
+        .iter()
+        .filter(|node| node.borrow().get_value().is_some())
+        .map(|node| node.borrow().get_value().unwrap())
+        .collect::<Vec<String>>();
+
+    println!("\nleft: {:?}", left_vals);
+    println!("right: {:?}\n", right_vals);
+
+
+    let left_split_expected = vec![ "Hello_", "my_", "na"];
+    let right_split_expected = vec![ "me_i", "s", "_Simon"];
+
+    assert_eq!(left_split_expected, left_vals);
+    assert_eq!(right_split_expected, right_vals);
+}
+
+#[test]
+fn rope_split_case_mid_letter(){
+    let rope = create_example_rope();
+
+    let (left, right) = rope.borrow_mut().split(13).unwrap();
+
+    let left_vals = left
+        .borrow()
+        .iter()
+        .filter(|node| node.borrow().get_value().is_some())
+        .map(|node| node.borrow().get_value().unwrap())
+        .collect::<Vec<String>>();
+
+    let right_vals = right 
+        .borrow()
+        .iter()
+        .filter(|node| node.borrow().get_value().is_some())
+        .map(|node| node.borrow().get_value().unwrap())
+        .collect::<Vec<String>>();
+
+    println!("\nleft: {:?}\n", left_vals);
+    println!("\nright: {:?}\n", right_vals);
+
+    let left_split_expected = vec![ "Hello_", "my_", "na", "me"];
+    let right_split_expected = vec![ "_i", "s", "_Simon"];
+
+    assert_eq!(left_split_expected, left_vals);
+    assert_eq!(right_split_expected, right_vals);
+}
+
+
+#[test]
+fn rope_split_case_last_letter(){
+    let rope = create_example_rope();
+
+    let (left, right) = rope.borrow_mut().split(15).unwrap();
+
+    let left_vals = left
+        .borrow()
+        .iter()
+        .filter(|node| node.borrow().get_value().is_some())
+        .map(|node| node.borrow().get_value().unwrap())
+        .collect::<Vec<String>>();
+
+    let right_vals = right 
+        .borrow()
+        .iter()
+        .filter(|node| node.borrow().get_value().is_some())
+        .map(|node| node.borrow().get_value().unwrap())
+        .collect::<Vec<String>>();
+
+    println!("\nleft: {:?}\n", left_vals);
+    println!("\nright: {:?}\n", right_vals);
+
+    let left_split_expected = vec![ "Hello_", "my_", "na", "me_i"];
+    let right_split_expected = vec![ "s", "_Simon"];
+
+    assert_eq!(left_split_expected, left_vals);
+    assert_eq!(right_split_expected, right_vals);
 }
 
