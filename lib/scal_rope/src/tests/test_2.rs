@@ -239,7 +239,7 @@ let left_vals = left
     .collect::<Vec<String>>();
 */
 #[test]
-fn rope_split_case_first_letter(){
+fn rope_split_case_lower_bound(){
     let rope = create_example_rope();
 
     let (left, right) = rope.borrow_mut().split(11).unwrap();
@@ -301,7 +301,7 @@ fn rope_split_case_mid_letter(){
 
 
 #[test]
-fn rope_split_case_last_letter(){
+fn rope_split_case_upper_bound(){
     let rope = create_example_rope();
 
     let (left, right) = rope.borrow_mut().split(15).unwrap();

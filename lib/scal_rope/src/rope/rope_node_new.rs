@@ -357,7 +357,7 @@ impl RopeNode {
         }
         // if index as exactly at boundary
         else if start_idx == weight {
-            println!("splitting at boundary");
+            //println!("splitting at boundary");
             let right_node = current_node.borrow().get_right().unwrap();
             return Ok((current_node.borrow().get_left().unwrap(), right_node));
         }
