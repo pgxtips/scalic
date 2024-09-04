@@ -1,6 +1,6 @@
 use std::{cell::RefCell, rc::Rc};
 
-use crate::rope::rope_node_new::RopeNode;
+use crate::rope::rope_node::RopeNode;
 
 pub struct InOrderRopeIter {
     stack: Vec<Rc<RefCell<RopeNode>>>,
@@ -24,7 +24,7 @@ impl InOrderRopeIter {
 
         while let Some(c) = node {
             stack.push(Rc::clone(&c));
-            node = c.borrow().get_left();
+            node = RopeNode::get_left(c);
         }
 
         InOrderRopeIter {
@@ -43,17 +43,17 @@ impl InOrderRopeIter {
                 None => return result,
             };
 
-            let right = parent.borrow().get_right();
+            let right = RopeNode::get_right(parent);
 
             match right {
                 Some(r) => {
                     self.stack.push(Rc::clone(&r));
-                    let mut cleft = r.borrow().get_left();
+                    let mut cleft = RopeNode::get_left(r);
 
                     while cleft.is_some() {
                         let val = cleft.unwrap();
                         self.stack.push(Rc::clone(&val));
-                        cleft = val.borrow().get_left();
+                        cleft = RopeNode::get_left(val);
                     }
                 },
                 None => {},
