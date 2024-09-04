@@ -1,3 +1,3 @@
-pub mod tests;
-pub mod rope;
+mod rope;
+pub use crate::rope::rope::Rope;
 

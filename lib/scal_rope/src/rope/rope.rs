@@ -1,6 +1,6 @@
 use std::{cell::RefCell, rc::Rc};
 
-use super::rope_node::RopeNode;
+use crate::rope::rope_node::rope_node::RopeNode;
 
 pub struct Rope {
     root: Rc<RefCell<RopeNode>>,
@@ -10,6 +10,15 @@ impl Rope{
     pub fn new() -> Self {
         let root = RopeNode::new();
         Rope { root }
+    }
+
+    pub fn char_at_index(&self, index: usize) -> char {
+        let root = self.root.clone();
+        let char = RopeNode::index_of(Rc::clone(&root), index);
+        match char {
+            Ok(res) => { res },
+            Err(_e) => { ' ' },
+        }
     }
 
     pub fn insert(&mut self, index: usize, value: String) {

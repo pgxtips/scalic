@@ -1,6 +1,6 @@
 use std::{cell::RefCell, rc::Rc};
 
-use crate::rope::rope_iter::InOrderRopeIter;
+use crate::rope::rope_node::rope_node_iter::InOrderRopeIter;
 
 
 #[derive(Debug, Clone, PartialEq)]
@@ -89,16 +89,6 @@ impl RopeNode {
         }
     }
 
-    pub fn set_left_none(self_: Rc<RefCell<Self>>) {
-        let old_left = match RopeNode::get_left(Rc::clone(&self_)){
-            Some(left) => left,
-            None => return
-        };
-        let new_weight = RopeNode::get_weight(Rc::clone(&self_)) - RopeNode::get_weight(old_left);
-        RopeNode::set_weight(Rc::clone(&self_), new_weight);
-        self_.borrow_mut().left = None;
-    }
-
     pub fn set_right(self_: Rc<RefCell<Self>>, node: Rc<RefCell<RopeNode>>) {
         // set parent of the right node
         RopeNode::set_parent(Rc::clone(&node), Rc::clone(&self_));
@@ -124,11 +114,6 @@ impl RopeNode {
         }
     }
 
-    pub fn set_right_none(self_: Rc<RefCell<Self>>) {
-        self_.borrow_mut().right = None;
-    }
-
-
     /// Provide a method to create an in-order iterator
     /// - returns an iterator over the leaves
     pub fn iter(self_: Rc<RefCell<Self>>) -> InOrderRopeIter {
@@ -136,9 +121,6 @@ impl RopeNode {
     }
 
     // methods 
-    pub fn is_root(self_: Rc<RefCell<Self>>) -> bool {
-        self_.borrow().parent.is_none()
-    }
 
     pub fn is_leaf(self_: Rc<RefCell<Self>>) -> bool {
         self_.borrow().left.is_none() && self_.borrow().right.is_none()

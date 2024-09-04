@@ -1,4 +1,5 @@
-use crate::rope::rope::Rope;
+#[allow(unused_imports)]
+use crate::Rope;
 
 #[test]
 fn rope_int_insert(){

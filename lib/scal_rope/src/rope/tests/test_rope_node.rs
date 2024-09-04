@@ -1,6 +1,8 @@
 use std::{cell::RefCell, rc::Rc};
-use crate::rope::rope_node::RopeNode;
 
+use crate::rope::rope_node::rope_node::RopeNode;
+
+#[allow(dead_code)]
 fn create_example_rope() -> Rc<RefCell<RopeNode>> {
 
     let root = RopeNode::new(); 
@@ -213,17 +215,6 @@ fn rope_index_of_out_of_bounds_large(){
 
     assert_eq!(true, result.is_err());
 }
-
-
-/*
-let left_vals = left
-    .borrow()
-    .iter()
-    .filter(|node| node.borrow().get_value().is_some())
-    .map(|node| node.borrow().get_value().unwrap())
-    .collect::<Vec<String>>();
-*/
-
 
 #[test]
 fn rope_split_lower_bound(){

@@ -1,6 +1,6 @@
 use std::{cell::RefCell, rc::Rc};
 
-use crate::rope::rope_node::RopeNode;
+use crate::rope::rope_node::rope_node::RopeNode;
 
 pub struct InOrderRopeIter {
     stack: Vec<Rc<RefCell<RopeNode>>>,
