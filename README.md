@@ -5,22 +5,24 @@
   - Rust 
 
 ## Build
-'''
+```
 
 cd app
-cargo run 
+cargo run
 
-'''
+```
 
 ## Scope
 
 - [x] Create project
 - [x] Create window
 - [x] Create a new buffer
-
-- [ ] Create Main Menu from buffer
-- [x] Open file into buffer
-- [ ] Save file from buffer
-- [ ] Edit file in buffer
-
-- [ ] Create a session which managers buffers
+- [ ] Implement basic UI
+  - [ ] Title bar
+  - [ kinda ] Editor window
+  - [ ] Modals
+- [x] Create editor Rope data structure as library
+- [x] Load files into Rope data structure
+- [x] Write tests for Rope data structure
+- [ ] Use Rope lib as storage medium for new buffers in main app
+ 
