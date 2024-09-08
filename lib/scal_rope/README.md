@@ -16,6 +16,8 @@ large strings.
 - [ ] Implement the `Rope` data structure optimizations documentation.
 - [ ] Optimize the `Rope` data structure so that it can open "src/tests/test_data/multi_line_large.txt".
 
+## Dev Notes 
+  -  Might be worth replacing the rebalance algorithm, at the moment it will rebuild the entire tree. This approach may not be suitable for large ropes, so it may be important to use rotations instead.
 
 ## Notes
 
