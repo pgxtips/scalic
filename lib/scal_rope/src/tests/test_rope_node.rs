@@ -1,6 +1,6 @@
 use std::{cell::RefCell, rc::Rc};
 
-use crate::rope::rope_node::rope_node::RopeNode;
+use crate::rope::rope_node::{rope_node::RopeNode, rope_node_helper::print_tree};
 
 #[allow(dead_code)]
 fn create_example_rope() -> Rc<RefCell<RopeNode>> {
@@ -478,3 +478,93 @@ fn rope_report(){
     assert_eq!("Hello_my_name_is_Simon", report);
 }
 
+
+#[test]
+fn rope_set_left_updates_weight(){
+    let rope = RopeNode::new();
+
+    assert_eq!(0, RopeNode::get_weight(rope.clone()));
+
+    let left = RopeNode::new_leaf("Hello_".to_string());
+    RopeNode::set_left(rope.clone(), left.clone());
+
+    assert_eq!(6, RopeNode::get_weight(rope.clone()));
+}
+
+#[test]
+fn rope_set_left_updates_weight_2(){
+    let rope = RopeNode::new();
+    assert_eq!(0, RopeNode::get_weight(rope.clone()));
+
+    let n1 = RopeNode::new();
+    let n2 = RopeNode::new_leaf("Hello_".to_string());
+    let n3 = RopeNode::new_leaf("World!".to_string());
+
+    RopeNode::set_left(n1.clone(), n2.clone());
+    RopeNode::set_right(n1.clone(), n3.clone());
+
+    assert_eq!(6, RopeNode::get_weight(n1.clone()));
+
+    RopeNode::set_left(rope.clone(), n1.clone());
+
+    assert_eq!(12, RopeNode::get_weight(rope.clone()));
+}
+
+#[test]
+fn rope_set_left_updates_weight_3(){
+    let rope = RopeNode::new();
+    assert_eq!(0, RopeNode::get_weight(rope.clone()));
+
+    let n1 = RopeNode::new();
+    let n2 = RopeNode::new();
+    let n3 = RopeNode::new();
+    let n4 = RopeNode::new_leaf("Hello_".to_string());
+    let n5 = RopeNode::new_leaf("World!".to_string());
+
+    RopeNode::set_left(n3.clone(), n4.clone());
+    RopeNode::set_right(n3.clone(), n5.clone());
+
+    assert_eq!(6, RopeNode::get_weight(n3.clone()));
+
+    RopeNode::set_left(n2.clone(), n3.clone());
+    assert_eq!(12, RopeNode::get_weight(n2.clone()));
+
+    RopeNode::set_left(n1.clone(), n2.clone());
+    assert_eq!(12, RopeNode::get_weight(n1.clone()));
+
+    RopeNode::set_left(rope.clone(), n1.clone());
+    assert_eq!(12, RopeNode::get_weight(rope.clone()));
+}
+
+#[test]
+fn rope_set_left_updates_weight_after_rebalance(){
+    let n1 = RopeNode::new();
+    let n2 = RopeNode::new();
+    let n3 = RopeNode::new();
+    let n4 = RopeNode::new_leaf("Hello_".to_string());
+    let n5 = RopeNode::new_leaf("World!".to_string());
+
+    RopeNode::set_left(n1.clone(), n2.clone());
+    RopeNode::set_right(n1.clone(), n3.clone());
+
+    RopeNode::set_left(n2.clone(), n4.clone());
+    RopeNode::set_right(n2.clone(), n5.clone());
+
+    // RopeNode::display_node_info(n1.clone());
+    print_tree(Some(n1.clone()));
+
+    let n1_2 = RopeNode::new();
+    let n2_2 = RopeNode::new();
+    let n3_2 = RopeNode::new();
+    let n4_2 = RopeNode::new_leaf("Hello_".to_string());
+    let n5_2 = RopeNode::new_leaf("World!".to_string());
+
+    RopeNode::set_left(n2_2.clone(), n4_2.clone());
+    RopeNode::set_right(n2_2.clone(), n1_2.clone());
+
+    RopeNode::set_left(n1_2.clone(), n5_2.clone());
+    RopeNode::set_right(n1_2.clone(), n3_2.clone());
+
+    //RopeNode::display_node_info(n2_2.clone());
+    print_tree(Some(n2_2.clone()));
+}

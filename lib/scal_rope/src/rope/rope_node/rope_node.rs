@@ -2,6 +2,8 @@ use std::{cell::RefCell, rc::Rc};
 
 use crate::rope::rope_node::rope_node_iter::InOrderRopeIter;
 
+use super::rope_node_helper::print_tree;
+
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct RopeNode {
@@ -32,6 +34,21 @@ impl RopeNode {
             left: None,
             right: None,
         }))
+    }
+
+    pub fn display_node_info(self_: Rc<RefCell<Self>>) {
+        println!("\n-------------------");
+        println!("Node Info: ");
+        println!("Weight: {}", RopeNode::get_weight(Rc::clone(&self_)));
+        println!("Length: {}", RopeNode::get_length(Rc::clone(&self_)));
+        println!("Value: {:?}", RopeNode::get_value(Rc::clone(&self_)));
+        println!("has left: {}", RopeNode::get_left(Rc::clone(&self_)).is_some());
+        println!("has right: {}", RopeNode::get_right(Rc::clone(&self_)).is_some());
+        println!("is root: {}", RopeNode::get_parent(Rc::clone(&self_)).is_none());
+        println!("is leaf: {}", RopeNode::is_leaf(Rc::clone(&self_)));
+        println!("is balanced: {}", RopeNode::is_balanced(Rc::clone(&self_)));
+        println!("leaves: {:?}", RopeNode::get_leaves(Rc::clone(&self_)));
+        println!("-------------------\n")
     }
 
     pub fn get_weight(self_: Rc<RefCell<Self>>) -> usize {
@@ -138,21 +155,7 @@ impl RopeNode {
         };
 
         let diff = (left_depth - right_depth).abs();
-
-        let condition_1 = match RopeNode::get_left(Rc::clone(&self_)){
-            Some(left) => RopeNode::is_balanced(Rc::clone(&left)),
-            None => true
-        };
-
-        let condition_2 = match RopeNode::get_right(Rc::clone(&self_)) {
-            Some(right) => RopeNode::is_balanced(Rc::clone(&right)),
-            None => true
-        };
-
-
-        if diff <= 1 && condition_1 && condition_2 {
-            return true;
-        }
+        if diff <= 1 { return true; }
 
         return false;
     }
@@ -209,8 +212,11 @@ impl RopeNode {
         if rope_2.is_none() { return Ok(self_); }
         let rope_2 = rope_2.unwrap();
 
-        //println!("rope_1: {:?}", rope_1.borrow().get_leaves());
-        //println!("rope_2: {:?}", rope_2.borrow().get_leaves());
+        //println!("before concat");
+        //println!("rope 1");
+        //print_tree(Some(self_.clone()));
+        //println!("rope 2");
+        //print_tree(Some(rope_2.clone()));
 
         let new_root = RopeNode::new();
 
@@ -219,10 +225,8 @@ impl RopeNode {
         RopeNode::set_right(Rc::clone(&new_root), Rc::clone(&rope_2));
         RopeNode::set_weight(Rc::clone(&new_root), rope_weight);
 
-        println!("new_rope weight: {:?}", RopeNode::get_weight(Rc::clone(&new_root)));
-
-        //println!("new_rope: {:?}", new_root.borrow().get_leaves());
-        //println!("new_rope_weight: {}", new_root.borrow().get_weight());
+        //println!("after concat");
+        //print_tree(Some(new_root.clone()));
 
         Ok(new_root)
     }
@@ -366,11 +370,11 @@ impl RopeNode {
             let (left_split, right_split) = RopeNode::split(Rc::clone(&next_node), start_idx)?;
 
             let return_left = left_split;
-            RopeNode::rebalance(Rc::clone(&return_left));
+            //RopeNode::rebalance(Rc::clone(&return_left));
 
             let self_right = RopeNode::get_right(Rc::clone(&self_));
             let return_right = RopeNode::concat(Rc::clone(&right_split), self_right)?;
-            RopeNode::rebalance(Rc::clone(&return_right));
+            //RopeNode::rebalance(Rc::clone(&return_right));
 
             return Ok((Rc::clone(&return_left), Rc::clone(&return_right)));
         } 
@@ -381,10 +385,10 @@ impl RopeNode {
 
             let self_left = RopeNode::get_left(Rc::clone(&self_)).unwrap();
             let return_left = RopeNode::concat(Rc::clone(&self_left), Some(left_split))?;
-            RopeNode::rebalance(Rc::clone(&return_left));
+            //RopeNode::rebalance(Rc::clone(&return_left));
 
             let return_right = right_split;
-            RopeNode::rebalance(Rc::clone(&return_right));
+            //RopeNode::rebalance(Rc::clone(&return_right));
 
             return Ok((Rc::clone(&return_left), Rc::clone(&return_right)));
         }
@@ -398,8 +402,8 @@ impl RopeNode {
                 let return_left = return_left.unwrap();
                 let return_right = return_right.unwrap();
 
-                RopeNode::rebalance(Rc::clone(&return_left));
-                RopeNode::rebalance(Rc::clone(&return_right));
+                //RopeNode::rebalance(Rc::clone(&return_left));
+                //RopeNode::rebalance(Rc::clone(&return_right));
                 return Ok((Rc::clone(&return_left), Rc::clone(&return_right)));
             }
             else if return_left.is_none() {
@@ -429,8 +433,6 @@ impl RopeNode {
         // if the rope is empty, then just insert the value
         if RopeNode::get_length(Rc::clone(&self_)) == 0 {
             let new_rope = RopeNode::concat(Rc::clone(&self_), Some(Rc::clone(&new_node)))?;
-            //println!("new_rope: {:?}", RopeNode::get_leaves(Rc::clone(&new_rope)));
-            RopeNode::rebalance(Rc::clone(&new_rope));
             return Ok(new_rope);
         }
 
@@ -445,18 +447,15 @@ impl RopeNode {
 
         if left_split_length == 0 { 
             let new_rope = RopeNode::concat(Rc::clone(&new_node), Some(Rc::clone(&right_split)))?;
-            RopeNode::rebalance(Rc::clone(&new_rope));
             return Ok(new_rope); 
         }
         else if right_split_length == 0 { 
             let new_rope = RopeNode::concat(Rc::clone(&left_split), Some(Rc::clone(&new_node)))?;
-            RopeNode::rebalance(Rc::clone(&new_rope));
             return Ok(new_rope); 
         }
 
         let left_split = RopeNode::concat(Rc::clone(&left_split), Some(Rc::clone(&new_node)))?;
         let new_rope = RopeNode::concat(Rc::clone(&left_split), Some(Rc::clone(&right_split)))?;
-        RopeNode::rebalance(Rc::clone(&new_rope));
 
         Ok(new_rope)
     }
@@ -483,8 +482,6 @@ impl RopeNode {
         else if rhs_length == 0 { return Ok(lhs); }
 
         let result = RopeNode::concat(Rc::clone(&lhs), Some(Rc::clone(&rhs)))?;
-        RopeNode::rebalance(Rc::clone(&result));
-
         return Ok(result);
     }
 

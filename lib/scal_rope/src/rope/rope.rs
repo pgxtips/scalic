@@ -1,4 +1,4 @@
-use std::{cell::RefCell, fs::File, io::{BufReader, Read}, path::Path, rc::Rc};
+use std::{cell::RefCell, fs::File, io::Read, path::Path, rc::Rc};
 
 use crate::rope::rope_node::rope_node::RopeNode;
 
@@ -59,7 +59,7 @@ impl Rope{
         if !Path::new(path).exists(){ return Err("File could not be found".into()); }
 
         let chunk_size: usize = self.chunk_size;
-        let root = Rc::clone(&self.root);
+        let mut root = Rc::clone(&self.root);
 
         let mut file = File::open(path)?;
         let mut buffer: Vec<u8> = vec![0; chunk_size];
@@ -72,13 +72,14 @@ impl Rope{
 
             let str_value = String::from_utf8_lossy(&buffer[..bytes_read]).to_string();
 
-            let new_node = RopeNode::new(); 
-            let new_node = RopeNode::insert(Rc::clone(&new_node), 0, str_value.to_string())?;
-            let new_node = RopeNode::concat(Rc::clone(&root), Some(Rc::clone(&new_node)))?;
+            let new_leaf = RopeNode::new_leaf(str_value); 
+            let new_node = RopeNode::concat(Rc::clone(&root), Some(Rc::clone(&new_leaf)))?;
 
-            self.root = new_node;
+            root = new_node;
             limit -= chunk_size; 
         }
+
+        self.root = root;
 
         Ok(())
     }

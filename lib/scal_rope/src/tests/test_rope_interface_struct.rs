@@ -1,3 +1,5 @@
+use std::fs;
+
 #[allow(unused_imports)]
 use crate::Rope;
 
@@ -25,14 +27,85 @@ fn rope_int_delete(){
 }
 
 #[test]
-fn rope_int_load_single_line_file_small(){
+fn rope_int_load_single_line_file_tiny(){
+    let file_loc = "src/tests/test_data/single_line_tiny.txt";
+
     let mut rope = Rope::new();
-    let _ = rope.load_file("src/tests/test_data/single_line_tiny.txt");
+    let _ = rope.load_file(file_loc);
+    let loaded_file = rope.report();
+    let expected = fs::read_to_string(file_loc).unwrap();
 
-    todo!("write loads of tests for rope node weight updating");
+    assert_eq!(loaded_file, expected);
+}
 
-    //println!("{}", rope.char_at_index(0));
+#[test]
+fn rope_int_load_single_line_file_small(){
+    let file_loc = "src/tests/test_data/single_line_small.txt";
 
-    println!("{}", rope.report());
-    println!("{}", rope.length());
+    let mut rope = Rope::new();
+    let _ = rope.load_file(file_loc);
+    let loaded_file = rope.report();
+    let expected = fs::read_to_string(file_loc).unwrap();
+
+    assert_eq!(loaded_file, expected);
+}
+
+#[test]
+fn rope_int_load_single_line_file_medium(){
+    let file_loc = "src/tests/test_data/single_line_medium.txt";
+
+    let mut rope = Rope::new();
+    let _ = rope.load_file(file_loc);
+    let loaded_file = rope.report();
+    let expected = fs::read_to_string(file_loc).unwrap();
+
+    assert_eq!(loaded_file, expected);
+}
+
+#[test]
+fn rope_int_load_single_line_file_large(){
+    let file_loc = "src/tests/test_data/single_line_large.txt";
+
+    let mut rope = Rope::new();
+    let _ = rope.load_file(file_loc);
+    let loaded_file = rope.report();
+    let expected = fs::read_to_string(file_loc).unwrap();
+
+    assert_eq!(loaded_file, expected);
+}
+
+#[test]
+fn rope_int_load_multi_line_file_small(){
+    let file_loc = "src/tests/test_data/multi_line_small.txt";
+
+    let mut rope = Rope::new();
+    let _ = rope.load_file(file_loc);
+    let loaded_file = rope.report();
+    let expected = fs::read_to_string(file_loc).unwrap();
+
+    assert_eq!(loaded_file, expected);
+}
+
+#[test]
+fn rope_int_load_multi_line_file_medium(){
+    let file_loc = "src/tests/test_data/multi_line_medium.txt";
+
+    let mut rope = Rope::new();
+    let _ = rope.load_file(file_loc);
+    let loaded_file = rope.report();
+    let expected = fs::read_to_string(file_loc).unwrap();
+
+    assert_eq!(loaded_file, expected);
+}
+
+#[test]
+fn rope_int_load_multi_line_file_large(){
+    let file_loc = "src/tests/test_data/multi_line_large.txt";
+
+    let mut rope = Rope::new();
+    let _ = rope.load_file(file_loc);
+    let loaded_file = rope.report();
+    let expected = fs::read_to_string(file_loc).unwrap();
+
+    assert_eq!(loaded_file, expected);
 }

@@ -43,17 +43,17 @@ impl InOrderRopeIter {
                 None => return result,
             };
 
-            let right = RopeNode::get_right(parent);
+            let right = RopeNode::get_right(Rc::clone(&parent));
 
             match right {
                 Some(r) => {
                     self.stack.push(Rc::clone(&r));
-                    let mut cleft = RopeNode::get_left(r);
+                    let mut cleft = RopeNode::get_left(Rc::clone(&r));
 
                     while cleft.is_some() {
                         let val = cleft.unwrap();
                         self.stack.push(Rc::clone(&val));
-                        cleft = RopeNode::get_left(val);
+                        cleft = RopeNode::get_left(Rc::clone(&val));
                     }
                 },
                 None => {},
